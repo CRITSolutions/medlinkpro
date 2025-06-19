@@ -1,0 +1,68 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: medlinkpro_postgres
+    environment:
+      POSTGRES_DB: medlinkpro
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_admin_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d medlinkpro"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - medlinkpro_network
+
+  # Redis for caching and sessions
+  redis:
+    image: redis:7-alpine
+    container_name: medlinkpro_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - medlinkpro_network
+
+  # pgAdmin for database management (development only)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: medlinkpro_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@medlinkpro.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - medlinkpro_network
+    profiles:
+      - development
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+
+networks:
+  medlinkpro_network:
+    driver: bridge

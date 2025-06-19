@@ -1,0 +1,38 @@
+# 🎯 Quick Start Commands (run these in order)
+
+## 1. Create project and install dependencies
+cd ~/Desktop  # or wherever you want your project
+mkdir medlinkpro-backend && cd medlinkpro-backend
+
+# Copy the package.json content from artifact above
+npm install
+
+## 2. Set up environment
+# Copy .env.example content from artifact above
+cp .env.example .env
+
+# Edit .env file with your preferred editor
+code .env  # or nano .env
+
+## 3. Start the database services
+# Make sure Docker Desktop is running first!
+docker-compose up -d postgres redis
+
+# Wait 30 seconds for services to start, then verify
+docker-compose ps
+
+## 4. Run database migrations (after we create them)
+npm run migrate
+
+## 5. Start development server
+npm run dev
+
+# Your server should start on http://localhost:3001
+# Health check: http://localhost:3001/health
+
+## 6. Useful development commands
+npm run test          # Run tests
+npm run lint           # Check code style
+npm run build          # Build for production
+docker-compose logs    # View container logs
+docker-compose down    # Stop all services
