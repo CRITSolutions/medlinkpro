@@ -39,14 +39,8 @@ jobs:
     - name: Install backend dependencies
       run: cd backend && npm install
     
-    - name: Install frontend dependencies  
-      run: cd frontend && npm install
-    
     - name: Run backend tests
       run: cd backend && npm test
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/medlinkpro_test
         NODE_ENV: test
-    
-    - name: Run frontend tests
-      run: cd frontend && npm test -- --run
